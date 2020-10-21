@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">PrimeNumbers</string>
+    <string name="calc_button">Calculate</string>
+    <string name="x">X</string>
+    <string name="y">Y</string>
+
+
+</resources>
