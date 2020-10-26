@@ -7,10 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +19,8 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout linear;
     private List<LinearLayout> verticalLayouts = new ArrayList<>();
     private static final int ROW_LIMIT = 8;
-
+    private LinearLayout.LayoutParams textParams;
+    private LinearLayout.LayoutParams childLayoutParams;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.calc_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                linear.removeAllViews();
+                cleanLayout();
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 System.out.println("clic");
                 boolean errorX = false;
@@ -67,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
 
                     }
                     for (LinearLayout l : verticalLayouts) {
+                        System.out.println("child layout"+l.getVisibility());
                         l.setVisibility(View.VISIBLE);
                     }
                 } else {{
@@ -84,10 +83,27 @@ public class MainActivity extends AppCompatActivity {
                     builder.create().show();
                 }
             }
+
         });
+        textParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+
+        textParams.setMargins(30, 0,0 , 0);
+
+        childLayoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        childLayoutParams.setMargins(8, 2,8 , 2);
+    }
+    public void cleanLayout() {
+        linear.removeAllViews();
+        for (LinearLayout ll :verticalLayouts) {
+            ll.removeAllViews();
+        }
+        verticalLayouts.clear();
 
     }
-
     public static boolean isPrimeNumber (long n) {
         boolean answer = true;
         if (n%2==0) {
@@ -108,14 +124,17 @@ public class MainActivity extends AppCompatActivity {
     }
     private void setTextViewForNumber(int number, LinearLayout linear) {
         TextView txt = new TextView(MainActivity.this);
+        txt.getTextSize();
         txt.setText(String.valueOf(number));
-        txt.setWidth(8);
+        //txt.
         if(isPrimeNumber(number)) {
             txt.setBackgroundColor(getResources().getColor(R.color.red));
         } else {
 
         }
-        linear.addView(txt);
+        System.out.println(txt.getVisibility());
+        txt.setVisibility(View.VISIBLE);
+        linear.addView(txt, textParams);
     }
     private void setRow(int number,int index) {
         int layout = index / ROW_LIMIT;
@@ -123,12 +142,15 @@ public class MainActivity extends AppCompatActivity {
         LinearLayout row;
         if(verticalLayouts.size() < layout+1) {
             row = new LinearLayout(MainActivity.this);
-            row.setOrientation(LinearLayout.VERTICAL);
+            row.setOrientation(LinearLayout.HORIZONTAL);
             verticalLayouts.add(row);
+            linear.addView(row,childLayoutParams);
         }
         else {
             row = verticalLayouts.get(layout);
         }
+        //row.setVisibility();
+        System.out.println(row.getVisibility());
         setTextViewForNumber(number,row);
     }
 }
